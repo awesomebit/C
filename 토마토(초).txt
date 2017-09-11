@@ -5,7 +5,7 @@ int a[110][110][110];
 int chk[110][110][110];
 
 
-int DFS(int k, int i, int j, int num)
+int function(int k, int i, int j, int num)
 {
 	int dk[] = { 1, -1, 0, 0, 0, 0 };
 	int di[] = { 0, 0, -1, 1, 0, 0 };
@@ -85,7 +85,7 @@ void main(void)
 				{
 					if (a[k][i][j] == n)
 					{
-						DFS(k, i, j, n+1);
+						function(k, i, j, n+1);
 					}
 				}
 			}
