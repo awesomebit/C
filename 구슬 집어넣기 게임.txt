@@ -1,6 +1,5 @@
-
 ////////////////////////////////////////////////
-//¹®Á¦ ¹øÈ£ : [TEST] ±¸½½ Áý¾î³Ö±â °ÔÀÓ
+//ë¬¸ì œ ë²ˆí˜¸ : [TEST] êµ¬ìŠ¬ ì§‘ì–´ë„£ê¸° ê²Œìž„
 ////////////////////////////////////////////////
 #if 01
 #include <stdio.h>
@@ -9,6 +8,7 @@
 #define b 1
 #define h 2
 
+#define INF 0x7FFFFFFF
 typedef struct st
 {
 	int i, j;
@@ -24,24 +24,27 @@ int map[15 + 10][15 + 10];
 int di[] = { -1, 1, 0, 0 };
 int dj[] = { 0, 0, -1, 1 };
 
-int success;
+int sol = INF;
+int flag = 0;
 
-
-int BFS(int n, int cnt, int r_i, int r_j, int b_i, int b_j)
+int DFS(int n, int cnt, int r_i, int r_j, int b_i, int b_j)
 {
 	int r_ni, r_nj;
 	int b_ni, b_nj;
 
+	if (sol < cnt) return;
+	if (r_i == b_i && r_j == b_j) return;
+	if (b_i == cor[h].i && b_j == cor[h].j) return;
+	if (n > 11) return;
+
 	if (r_i == cor[h].i && r_j == cor[h].j)
 	{
-		success = 1;
-		return cnt;
+		if (sol > cnt)
+		{
+			sol = cnt;
+		}
+		return;
 	}
-	if (success > 0) return cnt;
-
-	if (r_i == b_i && r_j == b_j) return 0;
-	if (b_i == cor[h].i && b_j == cor[h].j) return 0;
-	if (n > 10) return -1;
 
 	int k;
 	for (k = 0; k < 4; k++)
@@ -73,6 +76,18 @@ int BFS(int n, int cnt, int r_i, int r_j, int b_i, int b_j)
 
 }
 
+void reset(void)
+{
+	int i, j;
+	for (i = 1; i <= 15; i++)
+	{
+		for (j = 1; j <= 15; j++)
+		{
+			map[i][j] = 0;
+		}
+	}
+}
+
 void main(void)
 {
 	scanf("%d", &T);
@@ -80,6 +95,7 @@ void main(void)
 	int n = 0;
 	for (t = 0; t < T; t++)
 	{
+		reset();
 		scanf("%d %d", &R, &C);
 		for (i = 1; i <= R; i++)
 		{
@@ -108,10 +124,15 @@ void main(void)
 			}
 		}
 
-		success = 0;
-		int sol = 0;
-		sol = DFS(1, 0, cor[r].i, cor[r].j, cor[b].i, cor[b].j);
-		printf("%d\n", sol);
+		sol = INF;
+		int temp;
+		temp = DFS(1, 0, cor[r].i, cor[r].j, cor[b].i, cor[b].j);
+		if (sol == INF)
+		{
+			printf("-1\n");
+		}
+		else printf("%d\n", sol);
+
 	}
 }
 
