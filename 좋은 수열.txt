@@ -1,0 +1,68 @@
+
+////////////////////////////////////////////////
+//문제 번호 : [TST]좋은 수열
+////////////////////////////////////////////////
+#if 01
+#include <stdio.h>
+
+int N;
+char a[80 + 10];
+
+int Check(int num, int i)
+{
+	//a[i] = num;
+
+	int cnt = 0;
+	int set = i;
+	int k, l;
+	for (k = 1; k < i; k++)
+	{
+		if (a[k] == num)
+		{
+			for (l = k; l >= 1; l--)
+			{
+				if (a[l] != a[set]) break;
+				set--;
+				if (set == k) return 1;
+			}
+		}
+	}
+	//a[i] = 0;
+	return 0;
+}
+
+void function(void)
+{
+	int i;
+	for (i = 1; i <= N; i++)
+	{
+		if (Check(1, i) != 1)
+		{
+			a[i] = 1;
+		}
+		else if (Check(2, i) != 1)
+		{
+			a[i] = 2;
+		}
+		else if (Check(3, i) != 1)
+		{
+			a[i] = 3;
+		}
+	}
+}
+
+void main(void)
+{
+	scanf("%d", &N);
+
+	function();
+
+	int i;
+	for (i = 1; i <= N; i++)
+	{
+		printf("%d", a[i]);
+	}
+
+}
+
+#endif
