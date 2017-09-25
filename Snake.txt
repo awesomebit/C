@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////
-//¹®Á¦ ¹øÈ£ : [TST] Snake
+//ë¬¸ì œ ë²ˆí˜¸ : [TST] Snake
 ////////////////////////////////////////////////
 #if 01
 #include <stdio.h>
@@ -62,7 +62,7 @@ void function(int n, int i, int j, int d)
 		}
 	}
 
-	// 90µµ ²ª±â
+	// 90ë„ êº¾ê¸°
 	if (a[n] == left90)
 	{
 		if (d == up)
@@ -105,7 +105,7 @@ void function(int n, int i, int j, int d)
 	ni = i + di[dir];
 	nj = j + dj[dir];
 	
-	// º®¿¡ ºÎµúÈ÷¸é Á¾·á
+	// ë²½ì— ë¶€ë”ªíˆë©´ ì¢…ë£Œ
 	if (ni < 1 || nj < 1) return;
 	if (ni > N || nj > N) return;
 	if (map[ni][nj] != 0) return;
@@ -127,9 +127,7 @@ void main(void)
 	int sec;
 	char dir;
 	int l;
-	int set = 1;
-
-	int temp;
+	int set = 1
 
 	for (k = 1; k <= L; k++)
 	{
