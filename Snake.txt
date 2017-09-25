@@ -15,10 +15,10 @@
 typedef struct st
 {
 	int i, j;
-}FRUIT;
-FRUIT F[100 + 10];
+}SET;
+SET F[100 + 10];
 
-int a[100 + 10];
+int a[100*10000 + 10];
 int map[100 + 10][100 + 10];
 
 int di[] = { -1, 1, 0, 0 };
@@ -29,20 +29,37 @@ int r, c;
 int L;
 
 int snake = 1;
-int sol = 0;
+int cnt = 0;
+int ni = 0;
+int nj = 0;
 
 void function(int n, int i, int j, int d)
 {
-	sol = n;
-
 	int dir = d;
-	int ni = 0;
-	int nj = 0;
-	int l;
+
+	int l, k, m;
 	for (l = 1; l <= K; l++)
 	{
-		if (i == F[l].i && j == F[l].j) continue;
-		map[i][j] = 0;
+		if (i == F[l].i && j == F[l].j)
+		{
+			F[l].i = 0;
+			F[l].j = 0;
+			cnt++;
+		}
+	}
+
+	for (l = 1; l <= N; l++)
+	{
+		for (k = 1; k <= N; k++)
+		{
+			for (m = n - cnt - 1; m < n - cnt; m++)
+			{
+				if (map[l][k] == m)
+				{
+					map[l][k] = 0;
+				}
+			}
+		}
 	}
 
 	// 90도 꺾기
@@ -84,30 +101,17 @@ void function(int n, int i, int j, int d)
 			dir = down;
 		}
 	}
-	else
-	{
-		ni = i + di[dir];
-		nj = j + dj[dir];
-	}
 
-
-	for (l = 1; a[l] != 0; l++)
-	{
-		printf("%d ", a[l]);
-	}
-	printf("\n");
-	printf("%d\n", n);
-	printf("[%d]\n", a[1]);
-
+	ni = i + di[dir];
+	nj = j + dj[dir];
+	
 	// 벽에 부딪히면 종료
-	if (ni < 1 && nj < 1) return;
-	if (ni < 1 && nj > N) return;
-	if (ni > N && nj < 1) return;
-	if (ni > N && nj > N) return;
+	if (ni < 1 || nj < 1) return;
+	if (ni > N || nj > N) return;
 	if (map[ni][nj] != 0) return;
 	map[ni][nj] = snake++;
-	
-	function(n+1, ni, nj, dir);
+
+	function(n + 1, ni, nj, dir);
 }
 
 void main(void)
@@ -124,14 +128,17 @@ void main(void)
 	char dir;
 	int l;
 	int set = 1;
+
+	int temp;
+
 	for (k = 1; k <= L; k++)
 	{
 		scanf("%d", &sec);
-		for (l = set; l < set + sec; l++)
+		for (l = set; l <= sec; l++)
 		{
 			a[l] = 1;
 		}
-		set = set + sec;
+		set = sec + 1;
 		scanf(" %c", &dir);
 		if (dir == 'L')
 		{
@@ -145,17 +152,10 @@ void main(void)
 		}
 	}
 
-
-	int i;
-	for (i = 1; a[i] != 0; i++)
-	{
-		printf("%d ", a[i]);
-	}
-	printf("\n");
-
 	map[1][1] = snake++;
 	function(1, 1, 1, right);
 
-	printf("%d", sol);
+	printf("%d", snake-1);
 }
 #endif
+
