@@ -1,0 +1,165 @@
+
+///////////////////////////////////////////////
+//문제 번호 B: [TST]등산로 찾기
+///////////////////////////////////////////////
+#if 01
+#include <stdio.h>
+
+#define INF 0x7fffffff;
+
+typedef struct st
+{
+	int i, j;
+}MAP;
+
+MAP q[100 * 100 + 10];
+
+int N;
+int y, x;	// 산 정상 좌표
+
+int map[100 + 10][100 + 10];
+int sel[100 + 10][100 + 10];
+
+int di[] = { -1, 0, 1, 0 };
+int dj[] = { 0, 1, 0, -1 };
+
+int wp, rp;
+int sol = INF;
+
+int diff(int x, int y)
+{
+	return (x - y) >= 0 ? (x - y) : -(x - y);
+}
+
+void print(void)
+{
+	int i, j;
+	for (i = 1; i <= N; i++)
+	{
+		for (j = 1; j <= N; j++)
+		{
+			printf("%d ", sel[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+void clear(void)
+{
+	int i, j;
+	for (i = 1; i <= N; i++)
+	{
+		for (j = 1; j <= N; j++)
+		{
+			sel[i][j] = INF;
+		}
+	}
+
+	wp = 0;
+	rp = 0;
+}
+
+void BFS(int i, int j)
+{
+	clear();
+
+	int ti, tj;
+	int ni, nj;
+	int tmpdist;
+
+	q[wp].i = i;
+	q[wp++].j = j;
+	sel[i][j] = map[i][j] * map[i][j];
+
+	while (wp > rp)
+	{
+		ti = q[rp].i;
+		tj = q[rp++].j;
+
+		int k;
+		for (k = 0; k < 4; k++)
+		{
+			ni = ti + di[k];
+			nj = tj + dj[k];
+			
+			if (ni < 1 || ni > N || nj < 1 || nj > N) continue;
+
+			int tmpdiff = diff(map[ti][tj], map[ni][nj]);
+			if (map[ti][tj] == map[ni][nj]) tmpdist = 0;
+			else if (map[ti][tj] < map[ni][nj]) tmpdist = tmpdiff*tmpdiff;
+			else if (map[ti][tj] > map[ni][nj]) tmpdist = tmpdiff;
+			
+			if (sel[ni][nj] < sel[ti][tj] + tmpdist) continue;
+	
+			q[wp].i = ni;
+			q[wp++].j = nj;
+			sel[ni][nj] = sel[ti][tj] + tmpdist;
+		}
+	}
+
+	if (sel[y][x] < sol) sol = sel[y][x];
+}
+
+void BFS_temp(int i, int j)
+{
+	clear();
+
+	int ti, tj;
+	int ni, nj;
+	int tmpdist;
+
+	q[wp].i = i;
+	q[wp++].j = j;
+	sel[i][j] = map[i][j] * map[i][j];
+
+	while (wp > rp)
+	{
+		ti = q[rp].i;
+		tj = q[rp++].j;
+
+		int k;
+		for (k = 0; k < 4; k++)
+		{
+			ni = ti + di[k];
+			nj = tj + dj[k];
+
+			if (ni < 1 || ni > N || nj < 1 || nj > N) continue;
+			if (sel[ni][nj] < sel[ti][tj] + map[ni][nj]) continue;
+
+			q[wp].i = ni;
+			q[wp++].j = nj;
+			sel[ni][nj] = sel[ti][tj] + map[ni][nj];
+		}
+	}
+
+	if (sel[y][x] < sol) sol = sel[y][x];
+}
+
+void main(void)
+{
+	scanf("%d", &N);
+
+	scanf("%d %d", &y, &x);
+	int i, j;
+	int n = 0;
+	for (i = 1; i <= N; i++)
+	{
+		for (j = 1; j <= N; j++)
+		{
+			scanf("%d", &map[i][j]);
+		}
+	}
+
+	BFS_temp(1, 1);
+	for (i = 1; i <= N; i++)
+	{
+		//BFS(1, i);
+		//BFS(i, 1);
+		//BFS(N, i);
+		//BFS(i, N);
+	}
+
+	printf("%d", sol);
+}
+#endif
