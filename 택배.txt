@@ -24,18 +24,22 @@ void GREEDY(void)
 		int get = 0;
 		int from = q[i].snd;
 		int to = q[i].rcv;
-		int val = q[i].box;
+		int box = q[i].box;
 
+		// 현재 상태에서 적재할 수 있는 최대 load값을 구한다.
 		for (j = from; j < to; j++)
 		{
 			if (get < load[j]) get = load[j];
 		}
 
-		if (C - get < val) get = C - get;
-		else get = val;
+		// 최대용량보다 크다면 최대용량까지만 적재한다.
+		if (C - get < box) get = C - get;
+		else get = box;
 
+		// 적재할 용량을 sol값에 저장.
 		sol += get;
 
+		// load배열을 업데이트한다.
 		for (j = from; j < to; j++)
 		{
 			load[j] += get;
@@ -74,6 +78,8 @@ void main(void)
 
 	for (int i = 1; i <= M; i++) scanf("%d %d %d", &q[i].snd, &q[i].rcv, &q[i].box);
 
+	// 도착지를 기준으로 오름차순으로 정렬한다.
+	// 출발지를 기준으로 하면 예외조건이 너무 많음.
 	sort();
 	GREEDY();
 
