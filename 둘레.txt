@@ -29,8 +29,7 @@ void function(void)
 			
 			if(ni<1||ni>N||nj<1||nj>N) continue;
 			if (chk[ni][nj] == 1) continue;
-			
-			chk[ni][nj] = 1;
+					
 			map[ni][nj]++;
 		}
 	}
