@@ -13,7 +13,7 @@ typedef struct st
 	int x, y;
 }ANIMAL;
 ANIMAL a[100000 + 10];	//animal의 x,y좌표값
-#define INF 0x7fffffff
+
 
 // qsort 써야함 
 void sort(void)
