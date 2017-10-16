@@ -5,8 +5,9 @@
 #include <stdio.h>
 
 int N;
-int num[200+10];
-int D[200+10];
+int num[200 + 10];
+int D[200 + 10];
+int path[200 + 10];
 
 void inputData(void)
 {
@@ -18,10 +19,19 @@ void inputData(void)
 	}
 }
 
+void printPath(int idx)
+{
+	// 추적한 path를 역으로 출력하는 재귀함수.
+	if (idx == 0) return;
+	printPath(path[idx]);
+	printf("%d ", num[idx]);
+}
+
 int findLIS(void)
 {
 	int n, k;
 	int maxlen = 0;
+	int lastidx;
 	num[0] = 0;
 	D[0] = 0;
 
@@ -32,10 +42,19 @@ int findLIS(void)
 			if (num[k] < num[n] && D[n] < D[k] + 1)
 			{
 				D[n] = D[k] + 1;
+				path[n] = k;
 			}
 		}
-		if (maxlen < D[n]) maxlen = D[n];
+		if (maxlen < D[n])
+		{
+			maxlen = D[n];
+			lastidx = n;
+		}
 	}
+
+	printPath(lastidx);
+	printf("\n");
+
 	return maxlen;
 }
 
