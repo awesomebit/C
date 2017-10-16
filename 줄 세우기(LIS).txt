@@ -1,0 +1,47 @@
+//////////////////////////////////////////
+//문제 번호 L: [TST]줄 세우기
+//////////////////////////////////////////
+#if 01
+#include <stdio.h>
+
+int N;
+int num[200+10];
+int D[200+10];
+
+void inputData(void)
+{
+	scanf("%d", &N);
+	int i;
+	for (i = 1; i <= N; i++)
+	{
+		scanf("%d", &num[i]);
+	}
+}
+
+int findLIS(void)
+{
+	int n, k;
+	int maxlen = 0;
+	num[0] = 0;
+	D[0] = 0;
+
+	for (n = 1; n <= N; n++)
+	{
+		for (k = 0; k < n; k++)
+		{
+			if (num[k] < num[n] && D[n] < D[k] + 1)
+			{
+				D[n] = D[k] + 1;
+			}
+		}
+		if (maxlen < D[n]) maxlen = D[n];
+	}
+	return maxlen;
+}
+
+void main(void)
+{
+	inputData();
+	printf("%d", N - findLIS());
+}
+#endif
