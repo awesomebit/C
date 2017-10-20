@@ -20,6 +20,7 @@ CELL cell[1010];
 int di[] = { 0, -1, 1, 0, 0 };
 int dj[] = { 0, 0, 0, -1, 1 };
 int map[110][110];
+int chk[110][110];
 #define RED -1
 #define UP 1
 #define DOWN 2
@@ -27,8 +28,6 @@ int map[110][110];
 #define RIGHT 4
 #define ALIVE 100
 #define DEAD -100
-int WP;
-int q[1000000];
 
 void inputData(void)
 {
@@ -38,7 +37,7 @@ void inputData(void)
 	{
 		//dir 상: 1, 하: 2, 좌: 3, 우: 4
 		scanf("%d %d %d %d", &cell[i].i, &cell[i].j, &cell[i].cnt, &cell[i].dir);
-		map[cell[i].i][cell[i].j] = 1;
+		chk[cell[i].i][cell[i].j] = 1;
 		cell[i].life = ALIVE;
 	}
 
@@ -46,17 +45,16 @@ void inputData(void)
 	{
 		map[0][i] = RED;
 		map[i][0] = RED;
-		map[N-1][i] = RED;
-		map[i][N-1] = RED;
+		map[N - 1][i] = RED;
+		map[i][N - 1] = RED;
 	}
 }
 
 void init(void)
 {
-	memset(cell, 0, sizeof(Q[1010]));
+	memset(cell, 0, sizeof(CELL[1010]));
 	memset(map, 0, sizeof(map));
-	memset(q, 0, sizeof(q));
-	WP = 0;
+	memset(map, 0, sizeof(chk));
 }
 
 int move(int idx)
@@ -65,18 +63,20 @@ int move(int idx)
 	int ni, nj;
 	ni = cell[idx].i + di[cell[idx].dir];
 	nj = cell[idx].j + dj[cell[idx].dir];
-	map[cell[idx].i][cell[idx].j]--;
-	map[ni][nj]++;
+	chk[cell[idx].i][cell[idx].j]--;
+	chk[ni][nj]++;
+	cell[idx].i = ni;
+	cell[idx].j = nj;
 
-	// 약품을 밟으면 미생물 절반 죽고 이동방향 반대로 바뀜
+	// 약품을 밟으면 미생물 절반 죽고 이동방향이 반대로 바뀜
 	if (map[ni][nj] == RED)
 	{
 		cell[idx].cnt /= 2;
 		if (cell[idx].cnt <= 0)
 		{
 			cell[idx].life = DEAD;
-			map[ni][nj]--;
-			return;
+			chk[ni][nj]--;
+			return 0;
 		}
 		int tmpdir = cell[idx].dir;
 		if (tmpdir == UP) cell[idx].dir = DOWN;
@@ -84,14 +84,43 @@ int move(int idx)
 		else if (tmpdir == LEFT) cell[idx].dir = RIGHT;
 		else if (tmpdir == RIGHT) cell[idx].dir = LEFT;
 	}
-	return;
+	return 1;
 }
 
 void combine(void)
 {
 	// 미생물 군집 합쳐지는 것 구현해야 함
-
-
+	int i, j, k;
+	for (i = 0; i <= N; i++)
+	{
+		for (j = 0; j <= N; j++)
+		{
+			if (chk[i][j] > 1)
+			{
+				int maxidx = 0;
+				int cntmax = 0;
+				int cntsum = 0;
+				for (k = 1; k <= K; k++)
+				{	
+					if (cell[k].life == DEAD) continue;
+					if (cell[k].i == i && cell[k].j == j)
+					{
+						if (chk[i][j] > 1) chk[i][j]--;
+						cntsum += cell[k].cnt;
+						if (cntmax < cell[k].cnt)
+						{
+							cell[maxidx].life = DEAD;
+							cntmax = cell[k].cnt;
+							maxidx = k;
+						}
+						else cell[k].life = DEAD;
+					}
+				}
+				cell[maxidx].cnt = cntsum;
+				////////
+			}
+		}
+	}
 }
 
 int solve(void)
@@ -113,6 +142,7 @@ int solve(void)
 	// 미생물 세기
 	for (i = 1; i <= K; i++)
 	{
+		if (cell[i].life == DEAD) continue;
 		sol += cell[i].cnt;
 	}
 	return sol;
@@ -120,12 +150,13 @@ int solve(void)
 
 int main()
 {
+	int num = 1;
 	int T;
 	scanf("%d", &T);
 	while (T--)
 	{
 		inputData();
-		printf("%d", solve());
+		printf("#%d %d\n", num++, solve());
 
 		init();
 	}
