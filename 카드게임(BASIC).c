@@ -26,36 +26,6 @@ void init(void)
 	sol = 0;
 }
 
-int smallest(int A, int B)
-{
-	int i;
-	int flag = 0;
-	for (i = B; i <= N; i++)
-	{
-		if (L[A] >= R[i])
-		{
-			flag = 1;
-			return 0;
-		}
-	}
-	if (flag == 0) return 1;
-}
-
-int largest(int A, int B)
-{
-	int i;
-	int flag = 0;
-	for (i = B; i <= N; i++)
-	{
-		if (R[A] <= R[i])
-		{
-			flag = 1;
-			return 0;
-		}
-	}
-	if (flag == 0) return 1;
-}
-
 void DFS(int nL, int nR, int score)
 {
 	int l = nL;
