@@ -1,0 +1,88 @@
+///////////////////////////////////////////////////
+//톱니바퀴
+///////////////////////////////////////////////////
+#if 01
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define N_POLE 0
+#define S_POLE 1
+#define CLOCKWISE 1
+#define COUNTER_CLOCKWISE -1
+
+int G[5][13];
+int K;
+int gear_to_spin[110];
+int direction_to_spin[110];
+int dir_lut[5];
+
+void input(void)
+{
+	int i, j;
+	for (i = 1; i < 4; i++)
+	{
+		for (j = 1; j <= 12; j++)
+		{
+			scanf("%1d", G[i][j]);
+		}
+	}
+	scanf("%d", &K);
+	int k;
+	for (k = 1; k <= K; k++)
+	{
+		scanf("%d %d", &gear_to_spin[k], &direction_to_spin[k]);
+	}
+	
+}
+
+void spin(int gear_num, int dir)
+{
+	int tmp;
+	int i; 
+
+	if (dir == CLOCKWISE)
+	{
+		tmp = G[gear_num][12];
+		for (i = 12; i > 1; i--)
+		{
+			G[gear_num][i] = G[gear_num][i - 1];
+		}
+		G[gear_num][1] = tmp;
+	}
+	else if (dir == COUNTER_CLOCKWISE)
+	{
+		tmp = G[gear_num][1];
+		for (i = 1; i < 12; i++)
+		{
+			G[gear_num][i] = G[gear_num][i + 1];
+		}
+		G[gear_num][12] = tmp;
+	}
+}
+
+void solve(void)
+{
+	int k;
+	for (k = 1; k <= K; k++)
+	{
+		// make dir_lut
+		dir_lut[gear_to_spin[k]] = direction_to_spin[k];
+		int i;
+		for (i = 0; i < 4; i++)
+		{
+
+		}
+
+
+	}
+}
+
+int main(void)
+{
+	input();
+	solve();
+
+	return 0;
+}
+#endif
