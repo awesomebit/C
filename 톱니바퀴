@@ -5,26 +5,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define N_POLE 0
 #define S_POLE 1
 #define CLOCKWISE 1
 #define COUNTER_CLOCKWISE -1
 
-int G[5][13];
+int G[5][9];
 int K;
 int gear_to_spin[110];
 int direction_to_spin[110];
 int dir_lut[5];
+int spin_flag[5];
 
 void input(void)
 {
 	int i, j;
-	for (i = 1; i < 4; i++)
+	for (i = 1; i <= 4; i++)
 	{
-		for (j = 1; j <= 12; j++)
+		for (j = 1; j <= 8; j++)
 		{
-			scanf("%1d", G[i][j]);
+			scanf("%1d", &G[i][j]);
 		}
 	}
 	scanf("%d", &K);
@@ -33,18 +35,17 @@ void input(void)
 	{
 		scanf("%d %d", &gear_to_spin[k], &direction_to_spin[k]);
 	}
-	
 }
 
 void spin(int gear_num, int dir)
 {
 	int tmp;
-	int i; 
+	int i;
 
 	if (dir == CLOCKWISE)
 	{
-		tmp = G[gear_num][12];
-		for (i = 12; i > 1; i--)
+		tmp = G[gear_num][8];
+		for (i = 8; i > 1; i--)
 		{
 			G[gear_num][i] = G[gear_num][i - 1];
 		}
@@ -53,35 +54,94 @@ void spin(int gear_num, int dir)
 	else if (dir == COUNTER_CLOCKWISE)
 	{
 		tmp = G[gear_num][1];
-		for (i = 1; i < 12; i++)
+		for (i = 1; i < 8; i++)
 		{
 			G[gear_num][i] = G[gear_num][i + 1];
 		}
-		G[gear_num][12] = tmp;
+		G[gear_num][8] = tmp;
 	}
 }
 
-void solve(void)
+int solve(void)
 {
+	int sol = 0;
+
 	int k;
 	for (k = 1; k <= K; k++)
 	{
 		// make dir_lut
+		memset(dir_lut, 0, sizeof(dir_lut));
 		dir_lut[gear_to_spin[k]] = direction_to_spin[k];
+		int tmp = gear_to_spin[k];
 		int i;
-		for (i = 0; i < 4; i++)
-		{
-
+		for (i = 1; i <= 3; i++)
+		{	
+			if (dir_lut[tmp] == COUNTER_CLOCKWISE)
+			{
+				tmp++;
+				tmp %= 5;
+				if (tmp == 0) tmp = 1;
+				dir_lut[tmp] = CLOCKWISE;
+			}
+			else if (dir_lut[tmp] == CLOCKWISE)
+			{
+				tmp++;
+				tmp %= 5;
+				if (tmp == 0) tmp = 1;
+				dir_lut[tmp] = COUNTER_CLOCKWISE;
+			}
 		}
 
+		// check spin_flag
+		memset(spin_flag, 0, sizeof(spin_flag));
+		tmp = gear_to_spin[k];
+		spin_flag[tmp] = 1;
 
+		if (G[tmp][7] != G[tmp - 1][3] && (tmp - 1 != 0))
+		{
+			spin_flag[tmp - 1] = 1;
+			if (G[tmp - 1][7] != G[tmp - 2][3] && (tmp - 2 != 0))
+			{
+				spin_flag[tmp - 2] = 1;
+			}
+		}
+
+		if (G[tmp][3] != G[tmp + 1][7] && (tmp + 1 != 5))
+		{
+			spin_flag[tmp + 1] = 1;
+			if (G[tmp + 1][3] != G[tmp + 2][7] && (tmp + 2 != 5))
+			{
+				spin_flag[tmp + 2] = 1;
+			}
+		}
+
+		// spin gears
+		for (i = 1; i <= 4; i++)
+		{
+			if (spin_flag[i] == 1)
+			{
+				spin(i, dir_lut[i]);
+			}
+		}
 	}
+
+	// get score
+	int i;
+	for (i = 1; i <= 4; i++)
+	{
+		if (G[i][1] == S_POLE)
+		{
+			sol += pow(2, i - 1);
+		}
+	}
+
+	return sol;
 }
 
 int main(void)
 {
 	input();
-	solve();
+	printf("%d", solve());
 
 	return 0;
 }
