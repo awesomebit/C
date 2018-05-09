@@ -1,0 +1,134 @@
+struct note {
+
+	int ID, Y, X, Height, Width, len;
+	note *prev, *next;
+	char * text;
+
+	note() {
+		ID = -1;
+		Y = X = Height = Width = len = 0;
+		prev = next = 0; text = 0;
+	}
+
+	note(int mId, int mY, int mX, int mHeight, int mWidth, char * str, note * p) {
+		register int i;
+		ID = mId, Y = mY; X = mX; Height = mHeight; Width = mWidth;
+		len = Height * Width;
+		text = new char[len];
+		for (i = 0; str[i] && (i < len); i++) text[i] = str[i];
+		for (; i < len; i++) text[i] = 0;
+
+		linking(p);
+	}
+
+	void linking(note * p) {
+		this->prev = p;
+		this->next = p->next;
+		p->next->prev = this;
+		p->next = this;
+	}
+
+	void modify(int mHeight, int mWidth, char * str) {
+		register int i;
+		delete text;
+		Height = mHeight;
+		Width = mWidth;
+		len = Height * Width;
+		text = new char[len];
+		for (i = 0; str[i] && (i < len); i++) text[i] = str[i];
+		for (; i < len; i++) text[i] = 0;
+	}
+
+	void selection(note * p) {
+		this->prev->next = this->next;
+		this->next->prev = this->prev;
+		this->linking(p);
+	}
+
+	void write(char map[1060][1060], int y, int x) {
+		register int i, j;
+		for (i = y; i < y+5; i++) {
+			for (j = x; j < x+5; j++) {
+				if (Y <= y && y < Y + Height && X <= x && x <= X + Width) {
+					map[i][j] = text[(i - Y)*Width + (j - X)];
+				}
+			}
+		}
+	}
+
+	int writable(int y, int x) {
+		int y_out = (y + 4 < Y) || (Y + Height <= y);
+		int x_out = (x + 4 < X) || (X + Width <= x);
+		if (y_out || x_out) return 0; // don't have to write.
+
+		return 1;
+	}
+};
+
+char MAP[1000 + 50 + 10][1000 + 50 + 10];
+note * LIST[10000 + 10];
+note * head, *tail;
+int CNT;
+
+void init() {
+	register int i;
+	
+	// delete.
+	delete head;
+	delete tail;
+	for (i = 0; i < CNT; i++) delete LIST[i];
+	CNT = 0;
+	
+	// init.
+	head = new note;
+	tail = new note;
+	head->next = tail;
+	tail->prev = head;
+
+}
+
+void note_create(int mId, int mY, int mX, int mHeight, int mWidth, char * str) {
+	LIST[mId] = new note(mId, mY, mX, mHeight, mWidth, str, head);
+	LIST[mId]->selection(head);
+	CNT++;
+}
+
+void note_modify(int mId, int mHeight, int mWidth, char * str) {
+	LIST[mId]->modify(mHeight, mWidth, str);
+}
+
+void note_select(int mId) {
+	LIST[mId]->selection(head);
+}
+
+void note_move(int mId, int mY, int mX) { // AXIS? 가 기억이 안남.
+	LIST[mId]->Y = mY;
+	LIST[mId]->X = mX;
+	LIST[mId]->selection(head);
+}
+
+void note_print(int mY, int mX, char save[5][5]) {
+
+	register int i, j;
+	note * temp;
+	// init.
+	for (i = 0; i < 5; i++) {
+		for (j = 0; j < 5; j++) {
+			MAP[mY + i][mX + j] = 0;
+		}
+	}
+
+	//write to map.
+	temp = tail->prev;
+	for (;;) {
+		if (temp == head) break;
+		if (temp->writable(mY, mX)) temp->write(MAP, mY, mX);
+	}
+
+	// save.
+	for (i = 0; i < 5; i++) {
+		for (j = 0; j < 5; j++) {
+			save[i][j] = MAP[mY + i][mX + j];
+		}
+	}
+}
