@@ -1,0 +1,12 @@
+[Coretex-A/R Processor]
+-    AAPCS와 C-ASM 인터페이스
+-    Mode와 Exception
+-    Exception Handler 설계
+-    Interrupt Handler 설계
+-    MMU의 Translation, Protection 기능
+-    MMU의 Cache Policy 관리
+-    Cache Control
+-    Multi Core Booting
+-    SCU와 Cache Coherency
+-    Resource Management
+-         MultiCore와 Interrupt
